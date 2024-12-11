@@ -1,34 +1,35 @@
-pipeline{
-    agent{
+pipeline {
+    agent {
         label "slave"
     }
-    stages{
-        stage("cloning"){
-            steps{
-                echo"cloning repo to the server"
-                git url:"https://github.com/Kunal-Pere/Jenkins-CI-CD-Pipeline-To-Deploy-Website-Using-Docker-Container.git", branch:"main"
+    stages {
+        stage("Cloning") {
+            steps {
+                echo "Cloning repo to the server"
+                // Change the branch to 'developer'
+                git url: "https://github.com/kanakraj/DevopsProject_CICD_Pipeline.git", branch: "developer"
             }
         }
-        stage("Building image"){
-            steps{
-                echo"Building image through Dockerfile"
+        stage("Building image") {
+            steps {
+                echo "Building image through Dockerfile"
                 sh "sudo chmod 777 /var/run/docker.sock"
-                sh "docker build -t kunal1010/coffeeshop ."
+                sh "docker build -t kanakraj321/coffeeshop ."
             }
         }
-        stage("pushing on dockerhub"){
-            steps{
-                echo"pushing this image on dockerhub"
-                withCredentials([usernamePassword(credentialsId:"dockerhub", usernameVariable:"dockeruser", passwordVariable:"dockerpass")]){
+        stage("Pushing on DockerHub") {
+            steps {
+                echo "Pushing this image on DockerHub"
+                withCredentials([usernamePassword(credentialsId: "dockerhub", usernameVariable: "dockeruser", passwordVariable: "dockerpass")]) {
                     sh "docker login -u ${env.dockeruser} -p ${env.dockerpass}"
-                    sh "docker push kunal1010/coffeeshop"
+                    sh "docker push kanakraj321/coffeeshop"
                 }
             }
         }
-        stage("Running container"){
-            steps{
-                echo"running coffeeshop on container"
-                sh "docker run -itd -p 82:80 kunal1010/coffeeshop"
+        stage("Running container") {
+            steps {
+                echo "Running coffeeshop on container"
+                sh "docker run -itd -p 80:80 kanakraj321/coffeeshop"
             }
         }
     }
